@@ -1,6 +1,7 @@
 import type { Configuration, WebpackPluginInstance } from 'webpack';
 import path from 'path';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+const TerserPlugin = require('terser-webpack-plugin');
 
 type BuildEnv = {
     mode?: 'production' | 'development';
@@ -61,6 +62,19 @@ const config = async (env: BuildEnv = {}): Promise<Configuration> => {
         optimization: {
             usedExports: true,
             minimize: isProduction,
+            sideEffects: true,
+            providedExports: true,
+            minimizer: isProduction
+                ? [
+                      new TerserPlugin({
+                          terserOptions: {
+                              compress: {
+                                  pure_getters: true,
+                              },
+                          },
+                      }),
+                  ]
+                : [],
             splitChunks: {
                 chunks: 'all',
                 cacheGroups: {

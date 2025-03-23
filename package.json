@@ -4,6 +4,7 @@
   "description": "加强版的工具库",
   "main": "index.js",
   "title": "super-lo",
+  "sideEffects": false,
   "bugs": {
     "url": "https://github.com/Allen-Bayern/super-lo/issues"
   },
@@ -39,6 +40,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "prettier": "^2.8.8",
+    "terser-webpack-plugin": "^5.3.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "webpack": "^5.98.0",
