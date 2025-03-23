@@ -1,7 +1,4 @@
-import { isEmptyValue } from './helpers';
-
-type GetMapKey<T> = T extends Map<infer K, any> ? K : T extends WeakMap<infer K, any> ? K : never;
-type GetMapValue<T> = T extends Map<any, infer V> ? V : T extends WeakMap<any, infer V> ? V : never;
+import { isEmptyValue, type GetMapKey, type GetMapValue } from './helpers';
 
 /**
  * 安全地获取对象属性值，支持嵌套属性访问
@@ -27,7 +24,7 @@ function getattr<M extends Map<unknown, unknown>>(
     key: GetMapKey<M>,
     defaultValue?: GetMapValue<M>
 ): GetMapValue<M>;
-function getattr<T extends object>(obj: T, path: keyof T, defaultValue?: T[keyof T]): T[keyof T];
+function getattr<T extends object, Key extends keyof T>(obj: T, path: Key, defaultValue?: T[Key]): T[Key];
 function getattr<T extends Record<string, any> = Record<string, any>, P extends string = string, ValueType = unknown>(
     obj: T,
     path: P,

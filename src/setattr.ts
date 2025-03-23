@@ -1,4 +1,4 @@
-import { isDeepFrozen, isEmptyValue } from './helpers';
+import { isDeepFrozen, isEmptyValue, type GetSetElementType, type GetMapKey, type GetMapValue } from './helpers';
 
 type SetAttrReturn<T, P extends string, V> = P extends `${infer K}.${infer R}`
     ? K extends keyof T
@@ -6,25 +6,16 @@ type SetAttrReturn<T, P extends string, V> = P extends `${infer K}.${infer R}`
         : T & { [key in K]: { [key in R]: V } }
     : Omit<T, P> & { [key in P]: V };
 
-/**
- * 安全地设置对象属性值，支持嵌套属性设置
- * @param obj 目标对象
- * @param path 属性路径，支持点号分隔的嵌套路径
- * @param value 属性值
- * @returns 修改后的对象
- *
- * @example
- * const obj = { a: { b: { c: 1 } } };
- * setattr(obj, 'a.b.c', 2); // 返回 { a: { b: { c: 2 } } }
- */
+function setattr<S extends WeakSet<WeakKey>>(set: S, val: GetSetElementType<S>): S;
+function setattr<S extends Set<unknown>>(set: S, val: GetSetElementType<S>): S;
+
+function setattr<Arr extends unknown[]>(arr: Arr, key: number, val: Arr[number]): Arr;
+
+function setattr<M extends WeakMap<WeakKey, unknown>>(mapValue: M, key: GetMapKey<M>, val: GetMapValue<M>): M;
+function setattr<M extends Map<unknown, unknown>>(mapValue: M, key: GetMapKey<M>, val: GetMapValue<M>): M;
+
+function setattr<T extends object, Key extends keyof T>(obj: T, path: Key, val: T[Key]): T;
 function setattr<T extends Record<string, any>, P extends string, V>(obj: T, path: P, val: V): SetAttrReturn<T, P, V>;
-function setattr<K = unknown, V = unknown>(mapValue: Map<K, V>, key: K, val: V): Map<K, V>;
-function setattr<K extends WeakKey, V = unknown>(mapValue: WeakMap<K, V>, key: K, val: V): WeakMap<K, V>;
-function setattr<T>(arr: T[], key: number, val: T): T[];
-function setattr<T = unknown>(set: Set<T>, val: T): Set<T>;
-function setattr<T extends WeakKey>(set: WeakSet<T>, val: T): WeakSet<T>;
-function setattr<T extends object>(obj: T, path: string | number | symbol, val: unknown): T;
-function setattr(obj: unknown, path: unknown, val?: unknown): unknown;
 
 function setattr(param: unknown, path: unknown, val?: unknown) {
     if (typeof param !== 'object' || isEmptyValue(param)) {
@@ -43,10 +34,6 @@ function setattr(param: unknown, path: unknown, val?: unknown) {
         throw new Error(`Modifying ${path} is forbidden`);
     }
 
-    if (param instanceof Set) {
-        return param.add(path);
-    }
-
     if (param instanceof WeakSet) {
         if (typeof path !== 'object' && typeof path !== 'function') {
             throw new TypeError('WeakMap key must be object/function!');
@@ -55,6 +42,10 @@ function setattr(param: unknown, path: unknown, val?: unknown) {
             throw new TypeError('WeakMap key cannot be null!');
         }
 
+        return param.add(path);
+    }
+
+    if (param instanceof Set) {
         return param.add(path);
     }
 

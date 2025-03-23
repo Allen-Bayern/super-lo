@@ -67,4 +67,5 @@ const isDeepFrozen = <O extends object>(obj: O, seen: WeakSet<object> = new Weak
     );
 };
 
+export * from './types';
 export { isNull, isUndefined, isEmptyValue, joinArrayToString, flattenDeep, filterValidKeysFromIterator, isDeepFrozen };
