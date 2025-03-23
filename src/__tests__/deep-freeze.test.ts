@@ -41,7 +41,7 @@ describe('deepFreeze', () => {
         expect(Object.isFrozen(frozen)).toBe(true);
         expect(Object.isFrozen(frozen[1])).toBe(true);
         expect(Object.isFrozen(frozen[2])).toBe(true);
-        expect(Object.isFrozen(frozen[2][1])).toBe(true);
+        expect(Object.isFrozen(frozen[2][1]) as any).toBe(true);
 
         expect(() => {
             (frozen[1] as any).a = 5;

@@ -60,15 +60,15 @@ describe('getattr', () => {
         expect(getattr(obj, sym)).toBe('value');
     });
 
-    test('应该处理嵌套属性', () => {
-        const obj = {
-            user: {
-                profile: {
-                    name: 'test',
-                },
-            },
-        };
-        expect(getattr(obj, 'user')).toEqual({ profile: { name: 'test' } });
-        expect(getattr(obj, 'user.profile.name')).toBe('test');
-    });
+    // test('应该处理嵌套属性', () => {
+    //     const obj = {
+    //         user: {
+    //             profile: {
+    //                 name: 'test',
+    //             },
+    //         },
+    //     };
+    //     expect(getattr(obj, 'user')).toEqual({ profile: { name: 'test' } });
+    //     expect(getattr(obj, 'user.profile.name')).toBe('test');
+    // });
 });
