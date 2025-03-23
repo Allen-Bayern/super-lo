@@ -1,13 +1,11 @@
 import safeObjectKeys from './safe-object-keys';
 
-// 使用索引签名来明确类型
-type IndexableObject = {
-    [key: string]: any;
-    [key: number]: any;
-    [key: symbol]: any;
-};
-
-const deepFreeze = <O extends object>(obj: O): Readonly<O> => {
+/**
+ * 深度冻结对象及其所有属性
+ * @param obj 要冻结的对象
+ * @returns 冻结后的对象
+ */
+const deepFreeze = <T>(obj: T): T => {
     if (typeof obj !== 'object' || obj === null) {
         return obj;
     }
@@ -18,8 +16,7 @@ const deepFreeze = <O extends object>(obj: O): Readonly<O> => {
 
     Object.freeze(obj);
     safeObjectKeys(obj as Parameters<typeof safeObjectKeys>[0], false).forEach(key => {
-        // 使用类型断言确保TypeScript知道这个索引操作是安全的
-        const value = (obj as IndexableObject)[key];
+        const value = (obj as any)[key];
         if (typeof value === 'object' && value !== null) {
             deepFreeze(value);
         }

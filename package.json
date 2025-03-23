@@ -18,7 +18,10 @@
     "build:dev": "cross-env NODE_ENV=development webpack --env mode=dev",
     "build:analyze": "npm run build -- --env analyze=true",
     "dev": "webpack serve --mode development --open",
-    "lint": "eslint src/**/*.ts --fix"
+    "lint": "eslint src/**/*.ts --fix",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [
     "utils",
@@ -31,6 +34,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-typescript": "^7.26.0",
+    "@types/jest": "^29.5.12",
     "@typescript-eslint/eslint-plugin": "^8.27.0",
     "@typescript-eslint/parser": "^8.27.0",
     "babel-loader": "^10.0.0",
@@ -39,6 +43,8 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^4.2.1",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
     "prettier": "^2.8.8",
     "terser-webpack-plugin": "^5.3.14",
     "ts-node": "^10.9.2",
@@ -49,5 +55,8 @@
   },
   "dependencies": {
     "core-js": "^3.41.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

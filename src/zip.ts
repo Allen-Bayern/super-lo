@@ -1,13 +1,13 @@
 import { isEmptyValue } from './helpers';
 
 /**
- * Zips arrays into tuples with null-padding for unequal lengths
+ * 压缩数组为元组，对于不等长的数组使用 null 填充
  *
- * @param arrays Arrays with VARIABLE LENGTHS
- * @returns Zipped 2D array with null padding
+ * @param arrays 不同长度的数组
+ * @returns 使用 null 填充的压缩二维数组
  *
  * @example
- * looseZip([1], ['a', 'b']) // Returns [[1, 'a'], [null, 'b']]
+ * looseZip([1], ['a', 'b']) // 返回 [[1, 'a'], [null, 'b']]
  */
 export const looseZip = <T extends unknown[][]>(
     ...arrays: T
@@ -29,21 +29,21 @@ export const looseZip = <T extends unknown[][]>(
 };
 
 /**
- * Zips arrays into tuples with strict length validation (Python-like strict zip)
+ * 压缩数组为元组，严格长度验证（类似 Python 的严格压缩）
  *
- * @param arrays Arrays with THE SAME LENGTH
- * @returns Zipped 2D array
- * @throws When arrays have different lengths
+ * @param arrays 相同长度的数组
+ * @returns 压缩的二维数组
+ * @throws 当数组长度不同时抛出错误
  *
  * @example
- * strictZip([1, 2], ['a', 'b']) // Returns [[1, 'a'], [2, 'b']]
+ * strictZip([1, 2], ['a', 'b']) // 返回 [[1, 'a'], [2, 'b']]
  */
 export const strictZip = <T extends unknown[][]>(...arrays: T): { [K in keyof T]: T[K][number] }[] => {
     if (!arrays.length) {
         throw new Error('At least one array required');
     }
 
-    // like Python `strict=True`
+    // 类似 Python `strict=True`
     const baseLength = arrays[0].length;
     if (arrays.some(arr => arr.length !== baseLength)) {
         throw new Error('All arrays must have the same length');
@@ -61,7 +61,7 @@ interface ZipParam<L extends unknown[][], IsStrict extends boolean> {
 }
 
 /**
- * Zips arrays with configurable strictness
+ * 可配置严格度的数组压缩函数
  *
  * @example
  * zip(true)([1,2], ['a','b']) // [[1,'a'], [2,'b']]

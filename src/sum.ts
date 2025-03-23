@@ -1,8 +1,9 @@
-/** Hybrid sum function, like Python's `sum` function */
+/** 混合求和函数，类似 Python 的 `sum` 函数 */
 function sum(...args: number[]): number;
 function sum(...args: (number | string)[]): string;
 function sum(list: number[]): number;
 function sum(list: string[]): string;
+function sum(list: (number | string)[]): string;
 
 function sum(...params: unknown[]): number | string {
     if (!params.length) {

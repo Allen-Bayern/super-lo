@@ -6,11 +6,13 @@ type SetAttrReturn<T extends { [key: PropertyKey]: unknown }, K extends Property
         : Omit<T, K> & { [P in K]: V }
     : T & { [P in K]: V };
 
-// 添加可索引类型
-type IndexableObject = {
-    [key: PropertyKey]: any;
-};
-
+/**
+ * 安全地设置对象属性值
+ * @param obj 目标对象
+ * @param key 属性键
+ * @param value 属性值
+ * @returns 修改后的对象
+ */
 function setattr<T extends { [key: PropertyKey]: unknown }, K extends PropertyKey, V = T[K]>(
     obj: T,
     key: K,
@@ -21,10 +23,8 @@ function setattr<K extends WeakKey, V = unknown>(mapValue: WeakMap<K, V>, key: K
 function setattr<T>(arr: T[], key: number, val: T): T[];
 function setattr<T = unknown>(set: Set<T>, val: T): Set<T>;
 function setattr<T extends WeakKey>(set: WeakSet<T>, val: T): WeakSet<T>;
+function setattr<T extends object>(obj: T, key: string, val: unknown): T;
 
-/**
- * 类型安全的动态属性操作函数，支持对象/数组/Map/WeakMap，保持原始引用并自动校验输入合法性
- */
 function setattr(param: unknown, key: unknown, val?: unknown) {
     if (typeof param !== 'object' || isEmptyValue(param)) {
         throw new Error('Input must be an object type and cannot be null.');
@@ -97,7 +97,7 @@ function setattr(param: unknown, key: unknown, val?: unknown) {
     }
 
     // 使用类型断言确保安全访问
-    (param as IndexableObject)[key as PropertyKey] = val;
+    (param as Record<PropertyKey, unknown>)[key as PropertyKey] = val;
     return param;
 }
 

@@ -1,19 +1,11 @@
 import { isEmptyValue } from './helpers';
 
 /**
- * Safely retrieves values from various data structures with error handling
- *
- * @example
- * // Array usage
- * getattr([1,2,3], 1) // returns 2
- * getattr([], 'length') // returns 0
- *
- * // Map/WeakMap usage
- * const m = new Map([['id', 100]]);
- * getattr(m, 'id', 404) // returns 100
- *
- * // Object usage
- * getattr({name: 'Alice'}, 'name') // returns 'Alice'
+ * 安全地获取对象属性值
+ * @param obj 目标对象
+ * @param key 属性键
+ * @param defaultValue 默认值
+ * @returns 属性值或默认值
  */
 function getattr<T extends { [key: PropertyKey]: unknown }>(
     obj: T,
@@ -24,6 +16,7 @@ function getattr<T, K>(map: Map<K, T>, key: K, defaultValue?: T): T;
 function getattr<T, K extends WeakKey>(map: WeakMap<K, T>, key: K, defaultValue?: T): T;
 function getattr<T>(list: T[], index: number): T;
 function getattr<T>(list: T[], lengthKey: 'length'): number;
+function getattr<T extends object>(obj: T, key: string, defaultValue?: unknown): unknown;
 
 function getattr<T extends object>(obj: T, key: unknown, defaultValue?: unknown) {
     if (typeof obj !== 'object' || isEmptyValue(obj)) {
@@ -64,7 +57,7 @@ function getattr<T extends object>(obj: T, key: unknown, defaultValue?: unknown)
 
     const unifiedKey = typeof key === 'symbol' ? key : `${key}`;
     if ([...Object.keys(obj), ...Object.getOwnPropertySymbols(obj)].includes(unifiedKey)) {
-        return obj[key as keyof T];
+        return (obj as Record<PropertyKey, unknown>)[key as PropertyKey];
     }
 
     return defaultValue;
