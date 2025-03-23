@@ -1,5 +1,8 @@
 import { isEmptyValue } from './helpers';
 
+type GetMapKey<T> = T extends Map<infer K, any> ? K : T extends WeakMap<infer K, any> ? K : never;
+type GetMapValue<T> = T extends Map<any, infer V> ? V : T extends WeakMap<any, infer V> ? V : never;
+
 /**
  * 安全地获取对象属性值，支持嵌套属性访问
  * @param obj 目标对象
@@ -12,12 +15,24 @@ import { isEmptyValue } from './helpers';
  * getattr(obj, 'a.b.c'); // 返回 1
  * getattr(obj, 'a.b.d', 'default'); // 返回 'default'
  */
-function getattr<T extends Record<string, any>, P extends string>(obj: T, path: P, defaultValue?: unknown): unknown;
-function getattr<T, K>(map: Map<K, T>, key: K, defaultValue?: T): T;
-function getattr<T, K extends WeakKey>(map: WeakMap<K, T>, key: K, defaultValue?: T): T;
 function getattr<T>(list: T[], index: number): T;
 function getattr<T>(list: T[], lengthKey: 'length'): number;
-function getattr<T extends object>(obj: T, path: keyof T, defaultValue?: unknown): T[keyof T];
+function getattr<M extends WeakMap<WeakKey, unknown>>(
+    map: M,
+    key: GetMapKey<M>,
+    defaultValue?: GetMapValue<M>
+): GetMapValue<M>;
+function getattr<M extends Map<unknown, unknown>>(
+    map: M,
+    key: GetMapKey<M>,
+    defaultValue?: GetMapValue<M>
+): GetMapValue<M>;
+function getattr<T extends object>(obj: T, path: keyof T, defaultValue?: T[keyof T]): T[keyof T];
+function getattr<T extends Record<string, any> = Record<string, any>, P extends string = string, ValueType = unknown>(
+    obj: T,
+    path: P,
+    defaultValue?: ValueType
+): ValueType;
 
 function getattr<T extends object>(obj: T, path: unknown, defaultValue?: unknown) {
     if (typeof obj !== 'object' || isEmptyValue(obj)) {
