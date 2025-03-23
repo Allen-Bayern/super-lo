@@ -37,9 +37,7 @@ function simpleClassName(...values: unknown[]): string {
             return param;
         }
 
-        return joinArrayToString(
-            filterValidKeysFromIterator(param as Parameters<typeof filterValidKeysFromIterator>[0])
-        );
+        return joinArrayToString(filterValidKeysFromIterator(param as { [key: string]: unknown }));
     }
 
     const tmp: string[] = [];
@@ -48,7 +46,7 @@ function simpleClassName(...values: unknown[]): string {
         if (typeof item === 'string') {
             tmp.push(item);
         } else {
-            tmp.push(...filterValidKeysFromIterator(item as Parameters<typeof filterValidKeysFromIterator>[0]));
+            tmp.push(...filterValidKeysFromIterator(item as { [key: string]: unknown }));
         }
     });
 

@@ -11,7 +11,14 @@
     "type": "git",
     "url": "https://github.com/Allen-Bayern/super-lo.git"
   },
-  "scripts": {},
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "build": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" NODE_ENV=production webpack --env mode=prod",
+    "build:dev": "cross-env NODE_ENV=development webpack --env mode=dev",
+    "build:analyze": "npm run build -- --env analyze=true",
+    "dev": "webpack serve --mode development --open",
+    "lint": "eslint src/**/*.ts --fix"
+  },
   "keywords": [
     "utils",
     "super-lo"
@@ -19,8 +26,26 @@
   "author": "Yuebing <896175698@qq.com>",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/plugin-syntax-dynamic-import": "^7.8.3",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.26.0",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
+    "babel-loader": "^10.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^4.2.1",
+    "fork-ts-checker-webpack-plugin": "^9.0.2",
     "prettier": "^2.8.8",
-    "typescript": "^5.8.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2",
+    "webpack": "^5.98.0",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "core-js": "^3.41.0"
   }
 }

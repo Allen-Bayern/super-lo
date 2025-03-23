@@ -1,3 +1,5 @@
+import filterValidKeysFromIterator from './FilterValidKeysFromIterator';
+
 const isNull = (x: unknown) => x === null;
 const isUndefined = (x: unknown) => x === void 0;
 const isEmptyValue = (x: unknown) => isNull(x) || isUndefined(x);
@@ -49,10 +51,17 @@ const isDeepFrozen = <O extends object>(obj: O, seen: WeakSet<object> = new Weak
         );
     }
 
+    // 用于解决索引签名问题的类型
+    type IndexableObject = {
+        [key: string]: any;
+        [key: number]: any;
+        [key: symbol]: any;
+    };
+
     // 处理普通对象
     return Boolean(
         (Object.getOwnPropertyNames(obj) as PropertyKey[]).concat(Object.getOwnPropertySymbols(obj)).every(key => {
-            const value = obj[key];
+            const value = (obj as IndexableObject)[key];
             return isDeepFrozen(value, seen);
         })
     );

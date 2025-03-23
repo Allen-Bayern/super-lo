@@ -6,6 +6,11 @@ type SetAttrReturn<T extends { [key: PropertyKey]: unknown }, K extends Property
         : Omit<T, K> & { [P in K]: V }
     : T & { [P in K]: V };
 
+// 添加可索引类型
+type IndexableObject = {
+    [key: PropertyKey]: any;
+};
+
 function setattr<T extends { [key: PropertyKey]: unknown }, K extends PropertyKey, V = T[K]>(
     obj: T,
     key: K,
@@ -91,7 +96,8 @@ function setattr(param: unknown, key: unknown, val?: unknown) {
         return param;
     }
 
-    param[key as PropertyKey] = val;
+    // 使用类型断言确保安全访问
+    (param as IndexableObject)[key as PropertyKey] = val;
     return param;
 }
 
