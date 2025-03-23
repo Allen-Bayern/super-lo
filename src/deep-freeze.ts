@@ -6,7 +6,7 @@ import { isNull } from './helpers';
  * @param obj 要冻结的对象
  * @returns 冻结后的对象
  */
-const deepFreeze = <T>(obj: T): T => {
+const deepFreeze = <T>(obj: T): Readonly<T> => {
     if (typeof obj !== 'object' || isNull(obj)) {
         return obj;
     }
@@ -18,7 +18,7 @@ const deepFreeze = <T>(obj: T): T => {
     Object.freeze(obj);
     safeObjectKeys(obj as Parameters<typeof safeObjectKeys>[0], false).forEach(key => {
         const value = (obj as any)[key];
-        if (typeof value === 'object' && value !== null) {
+        if (typeof value === 'object' && !isNull(value)) {
             deepFreeze(value);
         }
     });
