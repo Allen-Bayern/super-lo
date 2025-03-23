@@ -35,20 +35,20 @@ describe('deepFreeze', () => {
     });
 
     test('应该冻结数组及其元素', () => {
-        const arr = [1, { a: 2 }, [3, { b: 4 }]];
+        const arr = [1, { a: 2 }, [3, { b: 4 }]] as const;
         const frozen = deepFreeze(arr);
 
         expect(Object.isFrozen(frozen)).toBe(true);
         expect(Object.isFrozen(frozen[1])).toBe(true);
         expect(Object.isFrozen(frozen[2])).toBe(true);
-        // expect(Object.isFrozen(frozen[2][1]) as any).toBe(true);
+        expect(Object.isFrozen((frozen[2] as readonly [number, { b: number }])[1])).toBe(true);
 
-        // expect(() => {
-        //     (frozen[1] as any).a = 5;
-        // }).toThrow();
-        // expect(() => {
-        //     (frozen[2][1] as any).b = 6;
-        // }).toThrow();
+        expect(() => {
+            (frozen[1] as { a: number }).a = 5;
+        }).toThrow();
+        expect(() => {
+            ((frozen[2] as readonly [number, { b: number }])[1] as { b: number }).b = 6;
+        }).toThrow();
     });
 
     test('应该处理原始值', () => {
@@ -68,7 +68,7 @@ describe('deepFreeze', () => {
     });
 
     test('应该处理循环引用', () => {
-        const obj: any = { a: 1 };
+        const obj: { a: number; self?: typeof obj } = { a: 1 };
         obj.self = obj;
 
         const frozen = deepFreeze(obj);
