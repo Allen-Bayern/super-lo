@@ -20,7 +20,7 @@ describe('zip', () => {
     });
 
     test('应该处理空数组', () => {
-        expect(zip(true)()).toEqual([]);
+        expect(zip(true)()).toThrow('At least one param required');
         expect(zip(false)()).toEqual([]);
     });
 

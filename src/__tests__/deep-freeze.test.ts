@@ -8,7 +8,6 @@ describe('deepFreeze', () => {
         expect(Object.isFrozen(frozen)).toBe(true);
         expect(frozen).toEqual({ a: 1, b: 2 });
 
-        // @ts-expect-error 测试冻结效果
         expect(() => {
             (frozen as any).a = 3;
         }).toThrow();
@@ -30,7 +29,6 @@ describe('deepFreeze', () => {
         expect(Object.isFrozen(frozen.b)).toBe(true);
         expect(Object.isFrozen(frozen.b.d)).toBe(true);
 
-        // @ts-expect-error 测试冻结效果
         expect(() => {
             (frozen.b.d as any).e = 4;
         }).toThrow();
@@ -45,11 +43,9 @@ describe('deepFreeze', () => {
         expect(Object.isFrozen(frozen[2])).toBe(true);
         expect(Object.isFrozen(frozen[2][1])).toBe(true);
 
-        // @ts-expect-error 测试冻结效果
         expect(() => {
             (frozen[1] as any).a = 5;
         }).toThrow();
-        // @ts-expect-error 测试冻结效果
         expect(() => {
             (frozen[2][1] as any).b = 6;
         }).toThrow();

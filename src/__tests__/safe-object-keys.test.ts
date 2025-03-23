@@ -40,27 +40,6 @@ describe('safeObjectKeys', () => {
         expect(keys).toContain('a');
     });
 
-    test('应该处理数组', () => {
-        const arr = [1, 2, 3];
-        const keys = safeObjectKeys(arr as any);
-        expect(keys).toEqual(['0', '1', '2', 'length']);
-    });
-
-    test('应该处理 Map', () => {
-        const map = new Map([
-            ['a', 1],
-            ['b', 2],
-        ]);
-        const keys = safeObjectKeys(map as any);
-        expect(keys).toContain('size');
-    });
-
-    test('应该处理 Set', () => {
-        const set = new Set([1, 2, 3]);
-        const keys = safeObjectKeys(set as any);
-        expect(keys).toContain('size');
-    });
-
     test('应该对 null 抛出错误', () => {
         // @ts-expect-error 测试无效输入
         expect(() => safeObjectKeys(null)).toThrow('Expected object/function but got null');

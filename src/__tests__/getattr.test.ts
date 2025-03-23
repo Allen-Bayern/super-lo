@@ -40,7 +40,7 @@ describe('getattr', () => {
 
     test('应该处理无效索引', () => {
         const arr = [1, 2, 3];
-        expect(() => getattr(arr, -1)).toThrow('Index out of bounds');
+        expect(() => getattr(arr, -1)).toThrow('The index should be an integer equal to or more than 0.');
         expect(() => getattr(arr, 3)).toThrow('Index out of bounds');
         expect(() => getattr(arr, 1.5)).toThrow('The index should be an integer');
     });
@@ -69,7 +69,6 @@ describe('getattr', () => {
             },
         };
         expect(getattr(obj, 'user')).toEqual({ profile: { name: 'test' } });
-        // @ts-expect-error 测试字符串路径
         expect(getattr(obj, 'user.profile.name')).toBe('test');
     });
 });

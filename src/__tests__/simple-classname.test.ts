@@ -67,7 +67,6 @@ describe('simpleClassName', () => {
     });
 
     test('应该处理无参数', () => {
-        // @ts-expect-error 测试无效输入
         expect(() => simpleClassName()).toThrow('Should input 1 param at least.');
     });
 });

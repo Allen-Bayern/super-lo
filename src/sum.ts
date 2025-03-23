@@ -6,7 +6,7 @@ function sum(list: string[]): string;
 function sum(list: (number | string)[]): string;
 
 function sum(...params: unknown[]): number | string {
-    if (!params.length) {
+    if (!params.length || (params.length === 1 && (params[0] as unknown[]).length === 0)) {
         throw new Error('At least one param required');
     }
 

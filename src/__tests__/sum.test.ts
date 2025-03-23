@@ -12,7 +12,6 @@ describe('sum', () => {
     });
 
     test('应该处理混合类型数组', () => {
-        // @ts-expect-error 测试混合类型
         expect(sum(['a', 1, 'b', 2])).toBe('a1b2');
     });
 
