@@ -1,3 +1,5 @@
+import safeObjectKeys from './safe-object-keys';
+
 const deepFreeze = <O extends object>(obj: O): Readonly<O> => {
     if (typeof obj !== 'object' || obj === null) {
         return obj;
@@ -8,7 +10,7 @@ const deepFreeze = <O extends object>(obj: O): Readonly<O> => {
     }
 
     Object.freeze(obj);
-    Reflect.ownKeys(obj).forEach(key => {
+    safeObjectKeys(obj as Parameters<typeof safeObjectKeys>[0], false).forEach(key => {
         const value = obj[key];
         if (typeof value === 'object' && value !== null) {
             deepFreeze(value);

@@ -91,8 +91,7 @@ function setattr(param: unknown, key: unknown, val?: unknown) {
         return param;
     }
 
-    // Direct assignment for objects
-    Reflect.set(param, key as PropertyKey, val);
+    param[key as PropertyKey] = val;
     return param;
 }
 
