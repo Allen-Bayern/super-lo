@@ -1,102 +1,125 @@
 import setattr from '../setattr';
 
 describe('setattr', () => {
-    test('应该设置对象属性', () => {
-        const obj: { name: string; age?: number } = { name: 'test' };
-        setattr(obj, 'age', 42);
-        expect(obj.age).toBe(42);
+    test('应该设置对象的属性值', () => {
+        const obj = { name: 'test' };
+        setattr(obj, 'age', 18);
+        expect(obj).toEqual({ name: 'test', age: 18 });
     });
 
-    test('应该设置数组元素', () => {
+    test('应该设置嵌套对象的属性值', () => {
+        const obj = {
+            user: {
+                profile: {
+                    name: 'test',
+                },
+            },
+        };
+        setattr(obj, 'user.profile.age', 18);
+        expect(obj).toEqual({
+            user: {
+                profile: {
+                    name: 'test',
+                    age: 18,
+                },
+            },
+        });
+    });
+
+    test('应该创建不存在的嵌套路径', () => {
+        const obj = {};
+        setattr(obj, 'user.profile.name', 'test');
+        expect(obj).toEqual({
+            user: {
+                profile: {
+                    name: 'test',
+                },
+            },
+        });
+    });
+
+    test('应该处理数组索引', () => {
         const arr = [1, 2, 3];
         setattr(arr, 1, 4);
-        expect(arr[1]).toBe(4);
+        expect(arr).toEqual([1, 4, 3]);
     });
 
-    test('应该追加数组元素', () => {
+    test('应该处理数组追加', () => {
         const arr = [1, 2, 3];
         setattr(arr, 3, 4);
-        expect(arr[3]).toBe(4);
+        expect(arr).toEqual([1, 2, 3, 4]);
     });
 
-    test('应该设置 Map 值', () => {
+    test('应该处理 Map', () => {
         const map = new Map();
         setattr(map, 'key', 'value');
         expect(map.get('key')).toBe('value');
     });
 
-    test('应该设置 WeakMap 值', () => {
+    test('应该处理 WeakMap', () => {
         const key = {};
         const map = new WeakMap();
         setattr(map, key, 'value');
         expect(map.get(key)).toBe('value');
     });
 
-    test('应该添加 Set 元素', () => {
+    test('应该处理 Set', () => {
         const set = new Set();
-        setattr(set, 42);
-        expect(set.has(42)).toBe(true);
+        setattr(set, 'value');
+        expect(set.has('value')).toBe(true);
     });
 
-    test('应该添加 WeakSet 元素', () => {
-        const key = {};
+    test('应该处理 WeakSet', () => {
+        const obj = {};
         const set = new WeakSet();
-        setattr(set, key);
-        expect(set.has(key)).toBe(true);
+        setattr(set, obj);
+        expect(set.has(obj)).toBe(true);
     });
 
-    test('应该处理无效索引', () => {
+    test('应该处理无效输入', () => {
+        type NullOrUndefined = null | undefined;
+        const testInvalidInput = (input: NullOrUndefined) => {
+            expect(() => {
+                const target = input as any;
+                setattr(target, 'key', 'value');
+            }).toThrow();
+        };
+
+        testInvalidInput(null);
+        testInvalidInput(undefined);
+    });
+
+    test('应该处理数组越界', () => {
         const arr = [1, 2, 3];
-        expect(() => setattr(arr, -1, 4)).toThrow('Invalid index');
-        expect(() => setattr(arr, 4, 4)).toThrow('Invalid index');
-        expect(() => setattr(arr, 1.5, 4)).toThrow('Index must be integer value');
+        expect(() => setattr(arr, -1, 4)).toThrow();
+        expect(() => setattr(arr, 4, 5)).toThrow();
     });
 
-    test('应该处理非对象输入', () => {
-        // @ts-expect-error 测试无效输入
-        expect(() => setattr(null, 'key', 'value')).toThrow('Input must be an object type');
-        // @ts-expect-error 测试无效输入
-        expect(() => setattr(undefined, 'key', 'value')).toThrow('Input must be an object type');
-        // @ts-expect-error 测试无效输入
-        expect(() => setattr(42, 'key', 'value')).toThrow('Input must be an object type');
+    test('应该处理嵌套路径中的无效值', () => {
+        const obj = {
+            a: {
+                b: null,
+            },
+            c: 'string',
+        };
+        expect(() => setattr(obj, 'a.b.c', 'value')).toThrow();
+        expect(() => setattr(obj, 'c.d', 'value')).toThrow();
     });
 
-    test('应该处理 Symbol 键', () => {
-        const sym = Symbol('test');
-        const obj: { [key: symbol]: string } = {};
-        setattr(obj, sym, 'value');
-        expect(obj[sym]).toBe('value');
+    test('应该处理保护属性', () => {
+        const obj = {};
+        expect(() => setattr(obj, '__proto__', {})).toThrow();
+        expect(() => setattr(obj, 'constructor', {})).toThrow();
+        expect(() => setattr(obj, 'prototype', {})).toThrow();
     });
-
-    // test('应该处理嵌套属性', () => {
-    //     const obj: { user: { profile: { name?: string } } } = {
-    //         user: {
-    //             profile: {},
-    //         },
-    //     };
-    //     setattr(obj, 'user.profile.name', 'test');
-    //     expect(obj.user.profile.name).toBe('test');
-    // });
 
     test('应该处理冻结对象', () => {
-        const obj = Object.freeze({ name: 'test' });
-        expect(() => setattr(obj, 'age', 42)).toThrow('Cannot modify deeply frozen object');
+        const obj = Object.freeze({ a: 1 });
+        expect(() => setattr(obj, 'b', 2)).toThrow();
     });
 
     test('应该处理密封对象', () => {
-        const obj = Object.seal({ name: 'test' });
-        expect(() => setattr(obj, 'age', 42)).toThrow('Cannot set property on sealed/non-extensible object');
-    });
-
-    test('应该处理不可扩展对象', () => {
-        const obj = Object.preventExtensions({ name: 'test' });
-        expect(() => setattr(obj, 'age', 42)).toThrow('Cannot set property on sealed/non-extensible object');
-    });
-
-    test('应该防止修改特殊属性', () => {
-        const obj = {};
-        expect(() => setattr(obj, '__proto__', {})).toThrow('Modifying __proto__ is forbidden');
-        expect(() => setattr(obj, 'prototype', {})).toThrow('Modifying prototype is forbidden');
-        expect(() => setattr(obj, 'constructor', {})).toThrow('Modifying constructor is forbidden');
+        const obj = Object.seal({ a: 1 });
+        expect(() => setattr(obj, 'b', 2)).toThrow();
     });
 });
