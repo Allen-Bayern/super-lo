@@ -1,4 +1,5 @@
 import safeObjectKeys from './safe-object-keys';
+import { isNull } from './helpers';
 
 /**
  * 深度冻结对象及其所有属性
@@ -6,7 +7,7 @@ import safeObjectKeys from './safe-object-keys';
  * @returns 冻结后的对象
  */
 const deepFreeze = <T>(obj: T): T => {
-    if (typeof obj !== 'object' || obj === null) {
+    if (typeof obj !== 'object' || isNull(obj)) {
         return obj;
     }
 

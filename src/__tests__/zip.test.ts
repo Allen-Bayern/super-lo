@@ -20,7 +20,8 @@ describe('zip', () => {
     });
 
     test('应该处理空数组', () => {
-        expect(zip(true)()).toThrow('At least one param required');
+        const strictZipFn = zip(true);
+        expect(() => strictZipFn()).toThrow('At least one array required');
         expect(zip(false)()).toEqual([]);
     });
 
