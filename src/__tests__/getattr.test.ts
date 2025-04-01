@@ -63,7 +63,9 @@ describe('getattr', () => {
     });
 
     test('应该处理无效输入', () => {
+        // @ts-expect-error 测试参数超限的类型检查
         expect(() => getattr(null, 'key')).toThrow();
+        // @ts-expect-error 测试参数超限的类型检查
         expect(() => getattr(undefined, 'key')).toThrow();
         expect(getattr({}, '')).toBe(undefined);
     });
