@@ -157,6 +157,36 @@ class Deque<T> implements Iterable<T> {
         return value;
     }
 
+    reverse() {
+        if (!isEmptyValue(this._head) && !isEmptyValue(this._tail)) {
+            const stack: BiDirectionNode<T>[] = [];
+            let cur: BiDirectionNode<T> | null = this._head;
+            while (cur) {
+                stack.push(cur);
+                cur = cur.next;
+            }
+            this._head = null;
+            this._tail = null;
+
+            while (stack.length) {
+                cur = stack.pop()!;
+
+                if (!this._head) {
+                    this._head = cur;
+                }
+
+                if (!this._tail) {
+                    this._tail = cur;
+                } else {
+                    this._tail.next = cur;
+                    this._tail = cur;
+                }
+            }
+        }
+
+        return this;
+    }
+
     rotate(n: number) {
         if (this._length === 0) return;
         const steps = n % this._length;
