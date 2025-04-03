@@ -64,6 +64,7 @@ class Deque<T> implements Iterable<T> {
             this._tail = node;
             this._length++;
         }
+        return this;
     }
 
     appendleft(value: T) {
@@ -78,12 +79,14 @@ class Deque<T> implements Iterable<T> {
             this._head = node;
             this._length++;
         }
+        return this;
     }
 
     clear() {
         this._head = null;
         this._tail = null;
         this._length = 0;
+        return this;
     }
 
     copy(): Deque<T> {
@@ -105,7 +108,6 @@ class Deque<T> implements Iterable<T> {
                 cur = cur.next;
             }
         }
-
         return res;
     }
 
@@ -113,12 +115,14 @@ class Deque<T> implements Iterable<T> {
         for (const item of iterable) {
             this.append(item);
         }
+        return this;
     }
 
     extendleft(iterable: Iterable<T>) {
         for (const item of iterable) {
             this.appendleft(item);
         }
+        return this;
     }
 
     get(index: number): T {
@@ -178,14 +182,10 @@ class Deque<T> implements Iterable<T> {
 
 const deque = <T = unknown>(iter?: Iterable<T>, maxLength = Infinity) => {
     const dequeRes = new Deque<T>(maxLength);
-
-    if (iter) {
-        for (const item of iter) {
-            dequeRes.append(item);
-        }
+    if (!iter) {
+        return dequeRes;
     }
-
-    return dequeRes;
+    return dequeRes.extend(iter);
 };
 
 export default deque;
