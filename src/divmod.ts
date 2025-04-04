@@ -44,6 +44,11 @@ const divmod = (dividend: number, divisor: number) => {
         remainder += Math.abs(divisor);
     }
 
+    // 解决-0问题
+    if (!remainder) {
+        remainder = 0;
+    }
+
     return Object.freeze<[number, number]>([quotient, remainder]);
 };
 
