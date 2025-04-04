@@ -37,12 +37,14 @@ const divmod = (dividend: number, divisor: number) => {
     }
 
     const quotient = Math.floor(dividend / divisor);
-    const remainder = dividend % divisor;
+    let remainder = dividend % divisor;
 
     // Normalize remainder to be non-negative
-    return Object.freeze<[number, number]>(
-        remainder >= 0 ? [quotient, remainder] : [quotient - 1, remainder + Math.abs(divisor)]
-    );
+    if (remainder < 0) {
+        remainder += Math.abs(divisor);
+    }
+
+    return Object.freeze<[number, number]>([quotient, remainder]);
 };
 
 export default divmod;
