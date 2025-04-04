@@ -44,6 +44,7 @@ class Deque<T> implements Iterable<T> {
             const node = createNewNode(value);
             this._head = node;
             this._tail = node;
+            this._length = 1;
         }
     }
 
@@ -152,7 +153,11 @@ class Deque<T> implements Iterable<T> {
         if (!this._head) throw new Error('空Deque不可执行popleft');
         const value = this._head.value;
         this._head = this._head.next;
-        if (this._head) this._head.prev = null;
+        if (this._head) {
+            this._head.prev = null;
+        } else {
+            this._tail = null; // 新增此行
+        }
         this._length--;
         return value;
     }
@@ -166,6 +171,8 @@ class Deque<T> implements Iterable<T> {
                 cur = cur.next;
             }
             this._head = null;
+            // _tail节点的prev同步置空
+            this._tail.prev = null;
             this._tail = null;
 
             while (stack.length) {
@@ -189,7 +196,7 @@ class Deque<T> implements Iterable<T> {
 
     rotate(n: number) {
         if (this._length === 0) return;
-        const steps = n % this._length;
+        const steps = Math.min(n % this._length, this._length); // 限制steps范围
         if (steps > 0) {
             for (let i = 0; i < steps; i++) {
                 this.appendleft(this.pop()!);
