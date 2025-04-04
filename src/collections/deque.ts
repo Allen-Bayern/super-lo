@@ -258,11 +258,7 @@ export class Deque<T> implements Iterable<T> {
      * @returns 新的队列实例
      */
     copy(): Deque<T> {
-        const newDeque = new Deque<T>();
-        for (const val of this) {
-            newDeque.append(val);
-        }
-        return newDeque;
+        return new Deque<T>().extend(this);
     }
 
     /**
