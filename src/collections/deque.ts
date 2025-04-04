@@ -452,12 +452,16 @@ export class Deque<T> implements Iterable<T> {
  * const dq5 = deque(new Set([1, 2, 3])); // [1, 2, 3]
  * ```
  */
-const deque = <T = unknown>(iter?: Iterable<T>, maxLength = Infinity) => {
+function deque<T>(): Deque<T>;
+function deque<T>(iter: Iterable<T>): Deque<T>;
+function deque<T>(iter?: Iterable<T>, maxLength?: number): Deque<T>;
+
+function deque<T = unknown>(iter?: Iterable<T>, maxLength = Infinity) {
     const dequeRes = new Deque<T>(maxLength);
     if (!iter) {
         return dequeRes;
     }
     return dequeRes.extend(iter);
-};
+}
 
 export default deque;
