@@ -4,7 +4,7 @@ describe('divmod 整数除法函数', () => {
     // 参数校验测试组
     describe('参数校验', () => {
         test('非数字参数抛出TypeError', () => {
-            expect(() => divmod('a' as any, 2)).toThrowError(TypeError);
+            expect(() => divmod('a' as any, 2)).toThrow(TypeError);
             expect(() => divmod(10, null as any)).toThrow('Both parameters must be numbers');
         });
 
