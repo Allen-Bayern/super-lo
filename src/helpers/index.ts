@@ -67,6 +67,20 @@ const isDeepFrozen = <O extends object>(obj: O, seen: WeakSet<object> = new Weak
     );
 };
 
+/** 是否可循环 */
+const isIterable = (element: any): element is Iterable<any> => {
+    return typeof element?.[Symbol.iterator] === 'function';
+};
+
 export * from './types';
 export * from './NodeTypes';
-export { isNull, isUndefined, isEmptyValue, joinArrayToString, flattenDeep, filterValidKeysFromIterator, isDeepFrozen };
+export {
+    isNull,
+    isUndefined,
+    isEmptyValue,
+    joinArrayToString,
+    flattenDeep,
+    filterValidKeysFromIterator,
+    isDeepFrozen,
+    isIterable,
+};
