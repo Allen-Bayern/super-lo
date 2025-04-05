@@ -109,6 +109,8 @@ export class Deque<T> implements Iterable<T> {
 
         this._head = newHead;
         this._tail = newTail;
+
+        return this;
     }
 
     /**
@@ -130,6 +132,8 @@ export class Deque<T> implements Iterable<T> {
 
         this._head = newHead;
         this._tail = newTail;
+
+        return this;
     }
 
     constructor(maxLength = Infinity) {
@@ -364,9 +368,9 @@ export class Deque<T> implements Iterable<T> {
         if (effectiveSteps === 0) return;
 
         if (effectiveSteps > 0) {
-            this._rotateRight(effectiveSteps);
+            return this._rotateRight(effectiveSteps);
         } else {
-            this._rotateLeft(-effectiveSteps);
+            return this._rotateLeft(-effectiveSteps);
         }
     }
 
