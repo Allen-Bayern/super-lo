@@ -88,7 +88,7 @@ export class Counter<T extends string | number> {
     }
 
     total() {
-        return sum(Object.values(this._dict));
+        return sum(Object.values(this._dict) as number[]);
     }
 
     update(updateVal: IterOrMap<T>) {
@@ -96,4 +96,6 @@ export class Counter<T extends string | number> {
     }
 }
 
-export const createCounter = <T extends string | number>(initVal?: IterOrMap<T>) => new Counter<T>(initVal);
+const createCounter = <T extends string | number>(initVal?: IterOrMap<T>) => new Counter<T>(initVal);
+
+export default createCounter;
