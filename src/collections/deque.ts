@@ -456,12 +456,13 @@ function deque<T>(): Deque<T>;
 function deque<T>(iter: Iterable<T>): Deque<T>;
 function deque<T>(iter?: Iterable<T>, maxLength?: number): Deque<T>;
 
-function deque<T = unknown>(iter?: Iterable<T>, maxLength = Infinity) {
-    const dequeRes = new Deque<T>(maxLength);
+function deque(...args: unknown[]) {
+    const [iter, maxLength = Infinity] = args;
+    const dequeRes = new Deque(Number(maxLength) || Infinity);
     if (!iter) {
         return dequeRes;
     }
-    return dequeRes.extend(iter);
+    return dequeRes.extend(iter as unknown[]);
 }
 
 export default deque;
