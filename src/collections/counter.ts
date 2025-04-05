@@ -9,14 +9,14 @@ const getSortedEntries = <Obj extends Record<string | number, number>>(obj: Obj)
         (a, b) => b[1] - a[1] || a[0].localeCompare(b[0]) // 值相同时按字母序
     ) as [string, number][];
 
+/** 计数器实现 */
 export class Counter<T extends string | number> {
     private _dict: Record<T, number> = {} as Record<T, number>;
 
     // 强化类型校验的初始化逻辑
     private _validateKeys(initVal: Record<T, number>) {
-        const invalidKeys = Object.keys(initVal).filter(
-            k => typeof k !== (typeof Object.keys(this._dict)[0] ?? 'string')
-        );
+        const invalidKeys = Object.keys(initVal).filter(k => typeof k !== 'string' && typeof k !== 'number');
+        console.log('invalidKeys: ', invalidKeys);
         if (invalidKeys.length) {
             throw new Error(`Invalid key type: ${invalidKeys.join(', ')}`);
         }
@@ -83,7 +83,11 @@ export class Counter<T extends string | number> {
             }
         };
 
-        isIterable(updateVal) ? handleIter(updateVal) : handleObj(updateVal);
+        if (isIterable(updateVal)) {
+            handleIter(updateVal);
+        } else {
+            handleObj(updateVal);
+        }
         return this;
     }
 
