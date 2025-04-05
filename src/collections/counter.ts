@@ -100,6 +100,7 @@ export class Counter<T extends string | number> {
     }
 }
 
+/** 计数器工厂函数 */
 const createCounter = <T extends string | number>(initVal?: IterOrMap<T>) => new Counter<T>(initVal);
 
 export default createCounter;
