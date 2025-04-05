@@ -1,14 +1,4 @@
-import { isEmptyValue } from '../helpers';
-
-/**
- * 双向链表节点接口
- * @template T 节点值的类型
- */
-interface BiDirectionNode<T = unknown> {
-    value: T;
-    prev: BiDirectionNode<T> | null;
-    next: BiDirectionNode<T> | null;
-}
+import { isEmptyValue, createBiDirectionNode, type BiDirectionNode } from '../helpers';
 
 /**
  * 长度变化类型枚举
@@ -23,18 +13,6 @@ enum LengthChange {
      */
     SUB_ONE = 'sub',
 }
-
-/**
- * 创建一个新的双向链表节点
- * @template T 节点值的类型
- * @param value 节点的值
- * @returns 新创建的节点
- */
-const createNewNode = <T = unknown>(value: T): BiDirectionNode<T> => ({
-    value,
-    prev: null,
-    next: null,
-});
 
 /**
  * 双向队列（Deque）实现类
@@ -72,9 +50,9 @@ export class Deque<T> implements Iterable<T> {
     /**
      * 设置队列长度
      * @param valueChange 长度变化值或变化类型
-     * @param onOverMaxLengthOrBelowOrEqualToZero 一旦长度小于等于0或溢出时的回调
+     * @param onOverMaxLength 长度溢出时回调
      */
-    private _setLength(valueChange: LengthChange | number, onOverMaxLengthOrBelowOrEqualToZero?: () => void) {
+    private _setLength(valueChange: LengthChange | number, onOverMaxLength?: () => void) {
         const { _maxLength: maxLength } = this;
 
         let currentLength = this._length;
@@ -90,12 +68,9 @@ export class Deque<T> implements Iterable<T> {
             this._head = null;
             this._tail = null;
             currentLength = 0;
-            if (onOverMaxLengthOrBelowOrEqualToZero) {
-                onOverMaxLengthOrBelowOrEqualToZero();
-            }
         } else if (currentLength > maxLength) {
-            if (onOverMaxLengthOrBelowOrEqualToZero) {
-                onOverMaxLengthOrBelowOrEqualToZero();
+            if (onOverMaxLength) {
+                onOverMaxLength();
             }
             currentLength = maxLength;
         }
@@ -108,7 +83,7 @@ export class Deque<T> implements Iterable<T> {
      */
     private _init(value: T) {
         if (!this._head && !this._tail) {
-            const node = createNewNode(value);
+            const node = createBiDirectionNode(value);
             this._head = node;
             this._tail = node;
             this._setLength(1);
@@ -185,7 +160,7 @@ export class Deque<T> implements Iterable<T> {
         if (isEmptyValue(this._tail)) {
             this._init(value);
         } else {
-            const node = createNewNode(value);
+            const node = createBiDirectionNode(value);
             this._tail.next = node;
             node.prev = this._tail;
             this._tail = node;
@@ -211,7 +186,7 @@ export class Deque<T> implements Iterable<T> {
         if (isEmptyValue(this._head)) {
             this._init(value);
         } else {
-            const node = createNewNode(value);
+            const node = createBiDirectionNode(value);
             this._head.prev = node;
             node.next = this._head;
             this._head = node;
@@ -227,8 +202,6 @@ export class Deque<T> implements Iterable<T> {
      * @returns 当前队列实例（支持链式调用）
      */
     clear() {
-        this._head = null;
-        this._tail = null;
         this._setLength(0);
         return this;
     }
