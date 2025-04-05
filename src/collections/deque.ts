@@ -37,42 +37,6 @@ const createNewNode = <T = unknown>(value: T): BiDirectionNode<T> => ({
 });
 
 /**
- * 连接方向枚举
- */
-enum CombineDirection {
-    /**
-     * 从左到右
-     */
-    LEFT_TO_RIGHT = 'left-to-right',
-    /**
-     * 从右到左
-     */
-    RIGHT_TO_LEFT = 'right-to-left',
-}
-
-/**
- * 连接两个双向链表节点
- * @template T 节点值的类型
- * @param node1 第一个节点
- * @param node2 第二个节点
- * @param direction 连接方向，默认为从左到右
- */
-const combineTwoNode = <T = unknown>(
-    node1: BiDirectionNode<T>,
-    node2: BiDirectionNode<T>,
-    direction?: CombineDirection
-) => {
-    if (direction === CombineDirection.RIGHT_TO_LEFT) {
-        node1.prev = node2;
-        node2.next = node1;
-        return;
-    }
-
-    node1.next = node2;
-    node2.prev = node1;
-};
-
-/**
  * 双向队列（Deque）实现类
  * @template T 队列中元素的类型
  * @example
@@ -123,12 +87,12 @@ export class Deque<T> implements Iterable<T> {
         }
 
         if (currentLength <= 0) {
-            if (onOverMaxLengthOrBelowOrEqualToZero) {
-                onOverMaxLengthOrBelowOrEqualToZero();
-            }
             this._head = null;
             this._tail = null;
             currentLength = 0;
+            if (onOverMaxLengthOrBelowOrEqualToZero) {
+                onOverMaxLengthOrBelowOrEqualToZero();
+            }
         } else if (currentLength > maxLength) {
             if (onOverMaxLengthOrBelowOrEqualToZero) {
                 onOverMaxLengthOrBelowOrEqualToZero();
