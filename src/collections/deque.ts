@@ -181,11 +181,15 @@ export class Deque<T> implements Iterable<T> {
         this._tail = newTail;
     }
 
-    /**
-     * 创建双向队列实例
-     * @param maxLength 队列的最大长度，默认为无限
-     */
     constructor(maxLength = Infinity) {
+        // 参数校验
+        if (maxLength < 0) {
+            throw new Error('maxLength不可以小于0');
+        }
+        if (Number.isFinite(maxLength) && !Number.isInteger(maxLength)) {
+            throw new Error('maxLength必须是大于等于0的整数或Infinity');
+        }
+
         this.clear();
         this._maxLength = maxLength;
     }
@@ -327,15 +331,15 @@ export class Deque<T> implements Iterable<T> {
      * @throws 当队列为空时抛出错误
      */
     pop() {
-        if (!isEmptyValue(this._tail) && !isEmptyValue(this._head)) {
-            const { value } = this._tail;
-            this._tail = this._tail.prev;
-            this._setLength(LengthChange.SUB_ONE);
-
-            return value;
+        if (isEmptyValue(this._head) || isEmptyValue(this._tail)) {
+            throw new Error('空Deque不可执行pop方法');
         }
 
-        throw new Error('空Deque不可执行pop方法');
+        const { value } = this._tail;
+        this._tail = this._tail.prev;
+        this._setLength(LengthChange.SUB_ONE);
+
+        return value;
     }
 
     /**
@@ -454,15 +458,15 @@ export class Deque<T> implements Iterable<T> {
  */
 function deque<T>(): Deque<T>;
 function deque<T>(iter: Iterable<T>): Deque<T>;
-function deque<T>(iter?: Iterable<T>, maxLength?: number): Deque<T>;
+function deque<T>(iter: Iterable<T>, maxLength?: number): Deque<T>;
 
-function deque(...args: unknown[]) {
-    const [iter, maxLength = Infinity] = args;
-    const dequeRes = new Deque(Number(maxLength) || Infinity);
-    if (!iter) {
-        return dequeRes;
+function deque<T>(iter?: Iterable<T>, maxLength?: number) {
+    const realMaxLen = maxLength === void 0 ? Infinity : maxLength;
+    const dequeRes = new Deque<T>(realMaxLen);
+    if (iter) {
+        return dequeRes.extend(iter);
     }
-    return dequeRes.extend(iter as unknown[]);
+    return dequeRes;
 }
 
 export default deque;
