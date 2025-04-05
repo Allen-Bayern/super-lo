@@ -108,22 +108,34 @@ export class Deque<T> implements Iterable<T> {
     /**
      * 设置队列长度
      * @param valueChange 长度变化值或变化类型
+     * @param onOverMaxLengthOrBelowOrEqualToZero 一旦长度小于等于0或溢出时的回调
      */
-    private _setLength(valueChange: LengthChange | number) {
+    private _setLength(valueChange: LengthChange | number, onOverMaxLengthOrBelowOrEqualToZero?: () => void) {
         const { _maxLength: maxLength } = this;
 
-        if (typeof valueChange === 'number' && valueChange <= maxLength) {
-            this._length = valueChange;
-        } else if (valueChange === LengthChange.ADD_ONE && this._length < maxLength) {
-            this._length++;
+        let currentLength = this._length;
+        if (typeof valueChange === 'number') {
+            currentLength = valueChange;
+        } else if (valueChange === LengthChange.ADD_ONE) {
+            currentLength++;
         } else {
-            this._length--;
+            currentLength--;
         }
 
-        if (!this._length) {
+        if (currentLength <= 0) {
+            if (onOverMaxLengthOrBelowOrEqualToZero) {
+                onOverMaxLengthOrBelowOrEqualToZero();
+            }
             this._head = null;
             this._tail = null;
+            currentLength = 0;
+        } else if (currentLength > maxLength) {
+            if (onOverMaxLengthOrBelowOrEqualToZero) {
+                onOverMaxLengthOrBelowOrEqualToZero();
+            }
+            currentLength = maxLength;
         }
+        this._length = currentLength;
     }
 
     /**
@@ -206,16 +218,16 @@ export class Deque<T> implements Iterable<T> {
      * ```
      */
     append(value: T) {
-        if (this._length >= this._maxLength) {
-            this.popleft();
-        }
         if (isEmptyValue(this._tail)) {
             this._init(value);
         } else {
             const node = createNewNode(value);
-            combineTwoNode(this._tail, node);
+            this._tail.next = node;
+            node.prev = this._tail;
             this._tail = node;
-            this._setLength(LengthChange.ADD_ONE);
+            this._setLength(LengthChange.ADD_ONE, () => {
+                this.popleft();
+            });
         }
         return this;
     }
@@ -232,16 +244,16 @@ export class Deque<T> implements Iterable<T> {
      * ```
      */
     appendleft(value: T) {
-        if (this._length >= this._maxLength) {
-            this.pop();
-        }
         if (isEmptyValue(this._head)) {
             this._init(value);
         } else {
             const node = createNewNode(value);
-            combineTwoNode(this._head, node, CombineDirection.LEFT_TO_RIGHT);
+            this._head.prev = node;
+            node.next = this._head;
             this._head = node;
-            this._setLength(LengthChange.ADD_ONE);
+            this._setLength(LengthChange.ADD_ONE, () => {
+                this.pop();
+            });
         }
         return this;
     }
