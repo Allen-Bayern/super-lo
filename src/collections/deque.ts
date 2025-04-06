@@ -86,7 +86,11 @@ export class Deque<T> implements Iterable<T> {
             const node = createBiDirectionNode(value);
             this._head = node;
             this._tail = node;
-            this._setLength(1);
+            this._setLength(1, () => {
+                // 极端条件 -- 如果_maxLength为0，则执行this.clear
+                console.warn('由于此时设置的最大长度为0, 因此节点被清空');
+                this.clear();
+            });
         }
     }
 
