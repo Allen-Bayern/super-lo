@@ -328,6 +328,8 @@ export class Deque<T> implements Iterable<T> {
                 stack.push(cur);
                 cur = cur.next;
             }
+
+            this._head.next = null;
             this._head = null;
             this._tail.prev = null;
             this._tail = null;
@@ -338,7 +340,6 @@ export class Deque<T> implements Iterable<T> {
                 if (!this._head) {
                     this._head = cur;
                 }
-
                 if (!this._tail) {
                     this._tail = cur;
                 } else {
