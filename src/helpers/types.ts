@@ -16,6 +16,8 @@ export type GetSetElementType<S> = S extends Set<infer T>
         : never
     : never;
 
-export interface MaybeCssProperties {
-    [key: string]: string | number;
-}
+export type ValueIsStringOrNumber<T extends object> = {
+    [K in keyof T]: string | number;
+};
+
+export type MaybeStyleDict = Partial<ValueIsStringOrNumber<CSSStyleDeclaration>>;

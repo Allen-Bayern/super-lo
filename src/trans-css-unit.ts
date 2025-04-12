@@ -1,5 +1,4 @@
 import { NUMBER_REGEX } from './constants';
-import type { MaybeCssProperties } from './helpers/types';
 
 type ValueType = number | string;
 
@@ -115,7 +114,7 @@ export const selfDefineTransCssUnitFactory = (opts: IOptions = {}) => {
  * parseCssProperties({ width: 100, height: '200px' });
  * // → { width: '6.25rem', height: '12.5rem' }
  */
-export const parseCssProperties = <Style extends MaybeCssProperties>(style: Style, opts: IOptions = {}) => {
+export const parseCssProperties = <Style extends Record<string, ValueType>>(style: Style, opts: IOptions = {}) => {
     const { fromUnit = 'px' } = opts;
 
     return Object.keys(style).reduce((obj, key) => {
