@@ -78,3 +78,75 @@ parseCssProperties(styles, {
 ```
 
 ## 🔧 API 文档
+
+### `transCssUnit`
+
+核心转换函数，支持两种调用方式：
+
+```ts
+// 方式1：分离参数
+transCssUnit('16px', { toUnit: 'vw' });
+
+// 方式2：配置对象
+transCssUnit({
+    value: '24em',
+    fromUnit: 'em',
+    algo: v => v * 10,
+});
+```
+
+**配置项参数说明**
+
+| 参数       | 类型                      | 默认值      | 描述                   | 是否必填             |
+| ---------- | ------------------------- | ----------- | ---------------------- | -------------------- |
+| `value`    | `string \| number`        | --          | 源单位（大小写不敏感） | 配置对象调用时为必须 |
+| `fromUnit` | `string`                  | `'px'`      | 源单位（大小写不敏感） | 否                   |
+| `toUnit`   | `string`                  | `'rem'`     | 目标单位               | 否                   |
+| `algo`     | `(num: number) => number` | px→rem 算法 | 自定义转换算法函数     | 否                   |
+
+### `selfDefineTransCssUnitFactory`
+
+创建预设转换器的工厂函数，适用于统一项目规范：
+
+```ts
+const pxToVw = selfDefineTransCssUnitFactory({
+    toUnit: 'vw',
+    algo: px => (px / window.innerWidth) * 100,
+});
+
+pxToVw(1920); // 100vw (在1920px宽视口下)
+```
+
+### `parseCssProperties`
+
+批量转换样式对象，智能识别可转换属性：
+
+```typescript
+// 转换嵌套对象
+const styles = {
+    padding: '20px',
+    fontSize: 16,
+};
+
+// 支持响应式配置
+parseCssProperties(styles, {
+    fromUnit: 'rem',
+    toUnit: 'px',
+    algo: v => v * 16,
+});
+```
+
+## 🛠️ 高级用法
+
+### 自定义单位系统
+
+```ts
+// 实现pt→px转换（1pt = 1.333px）
+const ptToPx = selfDefineTransCssUnitFactory({
+    fromUnit: 'pt',
+    toUnit: 'px',
+    algo: pt => Number((pt * 1.333).toFixed(2)),
+});
+
+ptToPx(12); // '16px'
+```
