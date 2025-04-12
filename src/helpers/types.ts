@@ -15,3 +15,7 @@ export type GetSetElementType<S> = S extends Set<infer T>
         ? T
         : never
     : never;
+
+export interface MaybeCssProperties {
+    [key: string]: string | number;
+}
