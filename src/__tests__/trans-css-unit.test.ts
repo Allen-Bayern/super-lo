@@ -8,7 +8,7 @@ describe('transCssUnit', () => {
         expect(transCssUnit('16')).toBe('1rem');
     });
 
-    test(' string values with units', () => {
+    test('string values with units', () => {
         expect(transCssUnit('16px')).toBe('1rem');
         expect(transCssUnit('32Px')).toBe('2rem');
     });
@@ -17,6 +17,7 @@ describe('transCssUnit', () => {
     test('should throw error for invalid arguments', () => {
         expect(() => transCssUnit({} as any)).toThrow('Invalid arguments');
         expect(() => transCssUnit('16em', { fromUnit: 'px' })).toThrow('must end with px');
+        expect(transCssUnit('16em', { fromUnit: 'px', shouldMatchFromUnit: false })).toBe('16em');
     });
 
     // 自定义算法测试

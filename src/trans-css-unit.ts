@@ -6,6 +6,7 @@ type ValueType = number | string;
 type IOptions = Partial<{
     fromUnit: string;
     toUnit: string;
+    shouldMatchFromUnit: boolean;
     algo: (fromValue: number) => number;
 }>;
 
@@ -44,43 +45,46 @@ export function transCssUnit(...args: unknown[]): string {
 
     let val: number | string = '';
     let opts: IOptions = {
+        shouldMatchFromUnit: true,
         fromUnit: 'px',
         toUnit: 'rem',
         algo: px2remDefault,
     };
 
-    if (args.length === 1) {
-        if (typeof args[0] === 'object') {
-            const [inputValue] = args;
-            if (!inputValue || !Object.keys(inputValue as object).includes('value')) {
-                throw new Error('Invalid arguments');
-            }
-            const { value, ...rest } = args[0] as FullParams;
-            val = value;
-            opts = {
-                ...opts,
-                ...rest,
-            };
-        } else {
-            val = args[0] as ValueType;
+    if (args.length === 1 && typeof args[0] === 'object') {
+        const [inputValue] = args;
+        if (!inputValue || !Object.keys(inputValue as object).includes('value')) {
+            throw new Error('Invalid arguments');
         }
-    } else {
-        const [value, rest] = args as [number | string, IOptions];
+        const { value, ...rest } = args[0] as FullParams;
         val = value;
         opts = {
             ...opts,
             ...rest,
         };
+    } else {
+        const [value, configOptions] = args as [number | string, IOptions];
+        val = value;
+        opts = {
+            ...opts,
+            ...configOptions,
+        };
     }
 
-    const { fromUnit = 'px', toUnit = 'rem', algo = px2remDefault } = opts;
+    const { fromUnit = 'px', toUnit = 'rem', shouldMatchFromUnit = true, algo = px2remDefault } = opts;
 
     let realVal = 0;
-    if (typeof val === 'number' || (typeof val === 'string' && !Number.isNaN(Number(val)))) {
+    const isValueStringifyNumber = typeof val === 'string' && !Number.isNaN(Number(val));
+    if (typeof val === 'number' || isValueStringifyNumber) {
         realVal = Number(val);
     } else {
         if (!verifyIsSatisfyUnit(val, fromUnit)) {
-            throw new Error(`Value unit mismatch: Input '${val}' must end with ${fromUnit} (case-insensitive)`);
+            if (shouldMatchFromUnit) {
+                throw new Error(`Value unit mismatch: Input '${val}' must end with ${fromUnit} (case-insensitive)`);
+            } else {
+                console.log('go here');
+                return val;
+            }
         }
         const matched = val.match(NUMBER_REGEX);
         if (!matched || !matched[0]) {
@@ -113,22 +117,20 @@ export const selfDefineTransCssUnitFactory = (opts: IOptions = {}) => {
  * parseCssProperties({ width: 100, height: '200px' });
  * // → { width: '6.25rem', height: '12.5rem' }
  */
-export const parseCssProperties = <Style extends CssProperties<ValueType>>(style: Style, opts: IOptions = {}) => {
-    const { fromUnit = 'px' } = opts;
+export const parseCssProperties = <Style extends CssProperties<ValueType>>(
+    style: Style,
+    opts: Omit<IOptions, 'shouldMatchFromUnit'> = {}
+) => {
+    const usedOpts: IOptions = {
+        ...opts,
+        shouldMatchFromUnit: false,
+    };
 
     return Object.keys(style).reduce((obj, key) => {
         const currentValue = style[key as keyof typeof style];
-        let realValue = `${currentValue}`;
-        if (
-            typeof currentValue === 'number' ||
-            (typeof currentValue === 'string' && !Number.isNaN(+currentValue)) ||
-            (typeof currentValue === 'string' && verifyIsSatisfyUnit(currentValue, fromUnit))
-        ) {
-            realValue = transCssUnit(currentValue, opts);
-        }
         return {
             ...obj,
-            [key as keyof typeof style]: realValue,
+            [key as keyof typeof style]: transCssUnit(currentValue as ValueType, usedOpts),
         };
     }, {} as Style);
 };

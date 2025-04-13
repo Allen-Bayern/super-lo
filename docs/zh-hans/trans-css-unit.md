@@ -97,12 +97,13 @@ transCssUnit({
 
 **配置项参数说明**
 
-| 参数       | 类型                      | 默认值      | 描述                   | 是否必填             |
-| ---------- | ------------------------- | ----------- | ---------------------- | -------------------- |
-| `value`    | `string \| number`        | --          | 源单位（大小写不敏感） | 配置对象调用时为必须 |
-| `fromUnit` | `string`                  | `'px'`      | 源单位（大小写不敏感） | 否                   |
-| `toUnit`   | `string`                  | `'rem'`     | 目标单位               | 否                   |
-| `algo`     | `(num: number) => number` | px→rem 算法 | 自定义转换算法函数     | 否                   |
+| 参数 | 类型 | 默认值 | 描述 | 是否必填 |
+| --- | --- | --- | --- | --- |
+| `value` | `string \| number` | -- | 源单位（大小写不敏感） | 配置对象调用时为必须 |
+| `fromUnit` | `string` | `'px'` | 源单位（大小写不敏感） | 否 |
+| `toUnit` | `string` | `'rem'` | 目标单位 | 否 |
+| `shouldMatchFromUnit` | `boolean` | `true` | 是否必须匹配`fromUnit`，若为`true`则不匹配`fromUnit`时抛出 Error，`false`时则直接返回`value` | 否 |
+| `algo` | `(num: number) => number` | 标准的`px`转`rem`算法，即 16px 对应 1rem | 自定义转换算法函数 | 否 |
 
 ### `selfDefineTransCssUnitFactory`
 
