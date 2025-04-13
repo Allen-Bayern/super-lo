@@ -1,4 +1,5 @@
 import { NUMBER_REGEX } from './constants';
+import { Properties as CssProperties } from 'csstype';
 
 type ValueType = number | string;
 
@@ -15,9 +16,7 @@ interface FullParams extends IOptions {
 const px2remDefault = (px: number): number => Number((px / 16).toFixed(2));
 
 const verifyIsSatisfyUnit = (valStr: string, fromUnit: string): boolean => {
-    // 转义特殊字符（如%需要转义）
     const escapedUnit = fromUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // 创建支持任意大小写的正则表达式
     const unitRegex = new RegExp(`${escapedUnit}$`, 'i');
     return unitRegex.test(valStr);
 };
@@ -114,7 +113,7 @@ export const selfDefineTransCssUnitFactory = (opts: IOptions = {}) => {
  * parseCssProperties({ width: 100, height: '200px' });
  * // → { width: '6.25rem', height: '12.5rem' }
  */
-export const parseCssProperties = <Style extends Record<string, ValueType>>(style: Style, opts: IOptions = {}) => {
+export const parseCssProperties = <Style extends CssProperties<ValueType>>(style: Style, opts: IOptions = {}) => {
     const { fromUnit = 'px' } = opts;
 
     return Object.keys(style).reduce((obj, key) => {
