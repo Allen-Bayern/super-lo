@@ -110,7 +110,7 @@ export const selfDefineTransCssUnitFactory = (opts: IOptions = {}) => {
 /**
  * Transforms CSS properties object with unit conversion
  * @param style - Original style object
- * @param Conversion options
+ * @param opts options
  * @returns New object with converted values
  *
  * @example
@@ -119,7 +119,11 @@ export const selfDefineTransCssUnitFactory = (opts: IOptions = {}) => {
  */
 export const parseCssProperties = <Style extends CssProperties<ValueType>>(
     style: Style,
-    opts: Omit<IOptions, 'shouldMatchFromUnit'> = {}
+    opts: Partial<{
+        fromUnit: string;
+        toUnit: string;
+        algo(fromValue: number): number;
+    }> = {}
 ) => {
     const usedOpts: IOptions = {
         ...opts,
