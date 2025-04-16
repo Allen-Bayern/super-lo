@@ -1,3 +1,4 @@
+export { all, anyFunc } from './all-any';
 export { default as deepFreeze } from './deep-freeze';
 export { default as divmod } from './divmod';
 export { enumerate, enumerateArray } from './enumerate';
