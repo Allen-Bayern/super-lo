@@ -1,14 +1,14 @@
-import { default as cmp, CompareStatus } from '../cmp';
+import { default as cmp } from '../cmp';
 
 // 测试分组：正常数值比较
 describe('cmp() - 正常数值比较', () => {
     test.each([
-        [2, 5, CompareStatus.LT], // 常规小于
-        [-1, 0, CompareStatus.LT], // 负数场景
-        [5, 2, CompareStatus.GT], // 常规大于
-        [0, 0, CompareStatus.EQ], // 零值相等
-        [1e30, 1e29, CompareStatus.GT], // 极大数比较
-        [0.000001, 0.000002, CompareStatus.LT], // 极小数比较
+        [2, 5, -1], // 常规小于
+        [-1, 0, -1], // 负数场景
+        [5, 2, 1], // 常规大于
+        [0, 0, 0], // 零值相等
+        [1e30, 1e29, 1], // 极大数比较
+        [0.000001, 0.000002, -1], // 极小数比较
     ])('输入 (%d, %d) 应返回 %s', (a, b, expected) => {
         expect(cmp(a, b)).toBe(expected);
     });

@@ -1,5 +1,5 @@
 export { all, anyFunc } from './all-any';
-export { default as cmp, CompareStatus } from './cmp';
+export { default as cmp } from './cmp';
 export { default as deepFreeze } from './deep-freeze';
 export { default as divmod } from './divmod';
 export { enumerate, enumerateArray } from './enumerate';

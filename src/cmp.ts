@@ -1,11 +1,5 @@
 const { isNaN, isFinite } = Number;
 
-export enum CompareStatus {
-    LT = -1,
-    EQ,
-    GT,
-}
-
 /**
  * Compares two numbers and returns their relative order as a `CompareStatus`.
  *
@@ -19,7 +13,7 @@ export enum CompareStatus {
  * @throws {Error} If either `num1` or `num2` is `NaN` (Not-a-Number).
  * @throws {Error} If either `num1` or `num2` is infinite.
  */
-const cmp = (num1: number, num2: number): CompareStatus => {
+const cmp = (num1: number, num2: number) => {
     let errorInfo = '';
 
     if (isNaN(num1) || isNaN(num2)) {
@@ -33,14 +27,14 @@ const cmp = (num1: number, num2: number): CompareStatus => {
     }
 
     if (num1 < num2) {
-        return CompareStatus.LT;
+        return -1;
     }
 
     if (num1 > num2) {
-        return CompareStatus.GT;
+        return 1;
     }
 
-    return CompareStatus.EQ;
+    return 0;
 };
 
 export default cmp;
