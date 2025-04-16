@@ -82,7 +82,6 @@ export function transCssUnit(...args: unknown[]): string {
             if (shouldMatchFromUnit) {
                 throw new Error(`Value unit mismatch: Input '${val}' must end with ${fromUnit} (case-insensitive)`);
             } else {
-                console.log('go here');
                 return val;
             }
         }
