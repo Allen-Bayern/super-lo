@@ -147,8 +147,8 @@ export class Deque<T> implements Iterable<T> {
             throw new Error('maxLength必须是大于等于0的整数或Infinity');
         }
 
-        this.clear();
         this._maxLength = maxLength;
+        this.clear();
     }
 
     /**
@@ -323,34 +323,29 @@ export class Deque<T> implements Iterable<T> {
      * @returns 当前队列实例（支持链式调用）
      */
     reverse() {
-        if (!isEmptyValue(this._head) && !isEmptyValue(this._tail)) {
-            const stack: BiDirectionNode<T>[] = [];
-            let cur: BiDirectionNode<T> | null = this._head;
-            while (cur) {
-                stack.push(cur);
-                cur = cur.next;
-            }
+        if (this._head && this._head !== this._tail) {
+            const reverseRecursive = (node: BiDirectionNode<T> | null): BiDirectionNode<T> | null => {
+                if (!node) return null;
+                // 递归到链表末尾获取新头节点
+                const nextNode = reverseRecursive(node.next);
+                // 交换当前节点的前后指针
+                const temp = node.prev;
+                node.prev = node.next;
+                node.next = temp;
+                // 返回新链表的头节点（原链表的尾节点）
+                return nextNode || node;
+            };
+            // 执行递归反转
+            reverseRecursive(this._head);
 
-            this._head.next = null;
-            this._head = null;
-            this._tail.prev = null;
-            this._tail = null;
+            // 更新头尾指针
+            [this._head, this._tail] = [this._tail, this._head];
 
-            while (stack.length) {
-                cur = stack.pop()!;
-
-                if (!this._head) {
-                    this._head = cur;
-                }
-                if (!this._tail) {
-                    this._tail = cur;
-                } else {
-                    this._tail.next = cur;
-                    this._tail = cur;
-                }
+            // 确保新尾部next指针置空
+            if (this._tail) {
+                this._tail.next = null;
             }
         }
-
         return this;
     }
 

@@ -47,6 +47,7 @@ describe('Deque 双向队列', () => {
     describe('特殊方法', () => {
         test('reverse反转完整性', () => {
             const dq = new Deque().extend([1, 2, 3]).reverse();
+            expect(Array.from(dq)).toEqual([3, 2, 1]);
             expect(dq.pop()).toBe(1);
             expect(dq.popleft()).toBe(3);
         });
