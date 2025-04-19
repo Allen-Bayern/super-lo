@@ -1,5 +1,6 @@
 // __tests__/isNumericString.test.ts
 import { isNumericString, type NumericString } from '../helpers';
+import { default as isNumeric } from '../is-numeric';
 
 describe('isNumericString', () => {
     // 有效数字字符串测试
@@ -49,5 +50,35 @@ describe('isNumericString', () => {
         const minSafeInt = String(Number.MIN_SAFE_INTEGER);
         expect(isNumericString(maxSafeInt)).toBe(true);
         expect(isNumericString(minSafeInt)).toBe(true);
+    });
+});
+
+describe('isNumeric', () => {
+    it('应识别有效数字', () => {
+        const validNumbers = [123, -456, 78.9, 0, Infinity, -Infinity, BigInt(123)];
+        validNumbers.forEach(num => {
+            expect(isNumeric(num)).toBe(true);
+        });
+    });
+
+    it('应拒绝无效数字', () => {
+        const invalidNumbers = [{}, [], null, undefined, true, false];
+        invalidNumbers.forEach(num => {
+            expect(isNumeric(num)).toBe(false);
+        });
+    });
+
+    it('字符串加数字不可以通过', () => {
+        const invalidNumbers = ['a123', 'b456', '789c'];
+        invalidNumbers.forEach(num => {
+            expect(isNumeric(num)).toBe(false);
+        });
+    });
+
+    it('字符串数字应该通过', () => {
+        const invalidNumbers = ['123', '456', '789'];
+        invalidNumbers.forEach(num => {
+            expect(isNumeric(num)).toBe(true);
+        });
     });
 });

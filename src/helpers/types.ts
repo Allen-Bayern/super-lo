@@ -22,4 +22,14 @@ export type ValueIsStringOrNumber<T extends object> = {
 
 export type MaybeStyleDict = Partial<ValueIsStringOrNumber<CSSStyleDeclaration>>;
 
-export type NumericString = `${number}`;
+export type NumericString =
+    | `${number}`
+    | `${bigint}`
+    | `${number}e${number}`
+    | `${bigint}e${number}`
+    | `${number}E${number}`
+    | `${bigint}E${number}`
+    | `${number}.${number}`
+    | `${bigint}.${number}`
+    | `${number}.${bigint}`
+    | `${bigint}.${bigint}`;
