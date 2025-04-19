@@ -21,3 +21,5 @@ export type ValueIsStringOrNumber<T extends object> = {
 };
 
 export type MaybeStyleDict = Partial<ValueIsStringOrNumber<CSSStyleDeclaration>>;
+
+export type NumericString = `${number}`;

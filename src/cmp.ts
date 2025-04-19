@@ -1,24 +1,23 @@
+import { isNumericString, type NumericString } from './helpers';
 const { isNaN, isFinite } = Number;
 
-/**
- * Compares two numbers and returns their relative order as a `CompareStatus`.
- *
- * @param num1 - The first number to compare.
- * @param num2 - The second number to compare.
- * @returns A `CompareStatus` indicating the comparison result:
- * - `CompareStatus.LT` (-1) if `num1` is less than `num2`.
- * - `CompareStatus.EQ` (0) if `num1` is equal to `num2`.
- * - `CompareStatus.GT` (1) if `num1` is greater than `num2`.
- *
- * @throws {Error} If either `num1` or `num2` is `NaN` (Not-a-Number).
- * @throws {Error} If either `num1` or `num2` is infinite.
- */
-const cmp = (num1: number, num2: number) => {
+type NumType = number | NumericString;
+
+const cmp = (num1: NumType, num2: NumType) => {
     let errorInfo = '';
 
-    if (isNaN(num1) || isNaN(num2)) {
+    if (typeof num1 === 'string' && !isNumericString(num1)) {
+        errorInfo = `num1 is not a number: ${num1}`;
+    } else if (typeof num2 === 'string' && !isNumericString(num2)) {
+        errorInfo = `num2 is not a number: ${num2}`;
+    }
+
+    const realNum1 = Number(num1);
+    const realNum2 = Number(num2);
+
+    if (isNaN(realNum1) || isNaN(realNum2)) {
         errorInfo = 'One or both numbers are NaN';
-    } else if (!isFinite(num1) || !isFinite(num2)) {
+    } else if (!isFinite(realNum1) || !isFinite(realNum2)) {
         errorInfo = 'One or both numbers are infinite. We cannot compare them.';
     }
 
@@ -26,11 +25,11 @@ const cmp = (num1: number, num2: number) => {
         throw new Error(errorInfo);
     }
 
-    if (num1 < num2) {
+    if (realNum1 < realNum2) {
         return -1;
     }
 
-    if (num1 > num2) {
+    if (realNum1 > realNum2) {
         return 1;
     }
 

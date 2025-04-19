@@ -29,9 +29,10 @@ describe('cmp() - 边界条件', () => {
 
 // 测试分组：类型兼容性
 describe('cmp() - 类型兼容性', () => {
-    test('字符串型数字不会自动转换', () => {
+    test('字符串型数字自动转换', () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        expect(() => cmp('5', 5)).toThrow(''); // 强制类型转换测试
+        expect(cmp('5', 5)).toBe(0); // 强制类型转换测试
+        expect(cmp('6', '5')).toBe(1); // 强制类型转换测试
+        expect(cmp(4, '5')).toBe(-1); // 强制类型转换测试
     });
 });

@@ -1,4 +1,5 @@
 import filterValidKeysFromIterator from './FilterValidKeysFromIterator';
+import type { NumericString } from './types';
 
 const isNull = (x: unknown) => x === null;
 const isUndefined = (x: unknown) => x === void 0;
@@ -72,6 +73,16 @@ const isIterable = (element: any): element is Iterable<any> => {
     return typeof element?.[Symbol.iterator] === 'function';
 };
 
+/** 是否数字字符串 */
+const isNumericString = (str: string): str is NumericString => {
+    return (
+        str !== '' &&
+        !isNaN(Number(str)) &&
+        !isNaN(parseFloat(str)) &&
+        /^[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?$/.test(str)
+    );
+};
+
 export * from './types';
 export * from './NodeTypes';
 export {
@@ -83,4 +94,5 @@ export {
     filterValidKeysFromIterator,
     isDeepFrozen,
     isIterable,
+    isNumericString,
 };

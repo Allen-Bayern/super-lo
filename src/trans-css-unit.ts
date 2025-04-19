@@ -1,3 +1,4 @@
+import { isNumericString } from './helpers';
 import { NUMBER_REGEX } from './constants';
 import { Properties as CssProperties } from 'csstype';
 
@@ -74,8 +75,7 @@ export function transCssUnit(...args: unknown[]): string {
     const { fromUnit = 'px', toUnit = 'rem', shouldMatchFromUnit = true, algo = px2remDefault } = opts;
 
     let realVal = 0;
-    const isValueStringifyNumber = typeof val === 'string' && !Number.isNaN(Number(val));
-    if (typeof val === 'number' || isValueStringifyNumber) {
+    if (typeof val === 'number' || isNumericString(val)) {
         realVal = Number(val);
     } else {
         if (!verifyIsSatisfyUnit(val, fromUnit)) {
