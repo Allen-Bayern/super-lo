@@ -4,10 +4,10 @@ import path from 'path';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 const TerserPlugin = require('terser-webpack-plugin');
 
-type BuildEnv = {
-    mode?: 'production' | 'development';
-    analyze?: boolean;
-};
+type BuildEnv = Partial<{
+    mode: 'production' | 'development';
+    analyze: boolean;
+}>;
 
 const toAbsolute = (newPath = '') => path.resolve(__dirname, newPath);
 
@@ -32,7 +32,7 @@ const config = async (env: BuildEnv = {}): Promise<Configuration> => {
     return {
         mode,
         entry: {
-            main: './src/index.ts',
+            main: toAbsolute('src/index.ts'),
         },
         output: {
             path: toAbsolute('dist'),
