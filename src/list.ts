@@ -2,21 +2,21 @@ type IterType<T = unknown> = Iterable<T> | ArrayLike<T>;
 type MapMethod<T = unknown, U = unknown> = (item: T, index: number) => U;
 
 /**
- * 类型安全的创建数组的工厂函数，支持多种参数形式
+ * Type-safe and Pythonic array factory function.
  *
  * @example
- * // 无参数调用(如用ts时最好传入泛型参数以保障类型安全)
+ * // No arguments (recommend passing generic type in TS for type safety)
  * list<number>(); // => number[]
  *
  * @example
- * // 转换类数组对象
+ * // Convert iterable/array-like objects
  * list(new Set([1, 2, 3])); // => [1, 2, 3]
  *
  * @example
- * // 带映射函数
+ * // With mapper function
  * list([1, 2, 3], x => x * 2); // => [2, 4, 6]
  *
- * @throws {Error} 当参数超过两个时抛出错误
+ * @throws {Error} When receiving more than 2 arguments
  */
 function list<T = unknown>(): T[];
 function list<T = unknown>(iter: IterType<T>): T[];
@@ -24,10 +24,10 @@ function list<T = unknown, U = unknown>(iter: IterType<T>, mapMethod: MapMethod<
 
 function list(...args: unknown[]) {
     if (args.length > 2) {
-        throw new Error('最多只有两个参数');
+        throw new Error('At most two arguments allowed');
     }
 
-    if (!args || !args.length) {
+    if (!args?.length) {
         return [];
     }
 
