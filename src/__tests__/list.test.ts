@@ -1,8 +1,24 @@
 import list from '../list';
+import { deque } from '../collections';
 
 describe('list', () => {
     test('Should handle empty params', () => {
         expect(list()).toEqual([]);
+    });
+
+    test('Should handle optional parameter', () => {
+        expect(
+            list({
+                iter: deque(new Set([1, 2, 3]), 6),
+            })
+        ).toEqual([1, 2, 3]);
+
+        expect(
+            list({
+                iter: new Set([1, 2, 3]),
+                mapMethod: (item: number) => item * 2,
+            })
+        ).toEqual([2, 4, 6]);
     });
 
     test('Should handle single array parameter', () => {
@@ -26,6 +42,6 @@ describe('list', () => {
 
     test('Should throw error with over 2 params', () => {
         // @ts-expect-error 测试参数超限的类型检查
-        expect(() => list([1], item => item, 'extra')).toThrow('最多只有两个参数');
+        expect(() => list([1], item => item, 'extra')).toThrow('At most two arguments allowed');
     });
 });

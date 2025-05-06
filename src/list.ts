@@ -19,6 +19,7 @@ type MapMethod<T = unknown, U = unknown> = (item: T, index: number) => U;
  * @throws {Error} When receiving more than 2 arguments
  */
 function list<T = unknown>(): T[];
+function list<T = unknown, U = unknown>(opts: { iter: IterType<T>; mapMethod?: MapMethod<T, U> }): U[];
 function list<T = unknown>(iter: IterType<T>): T[];
 function list<T = unknown, U = unknown>(iter: IterType<T>, mapMethod: MapMethod<T, U>): U[];
 
@@ -31,10 +32,24 @@ function list(...args: unknown[]) {
         return [];
     }
 
-    const [iter, mapMethod] = args as [IterType, MapMethod];
     if (args.length === 1) {
-        return Array.from(iter);
+        const [param] = args;
+        const { iter, mapMethod } = param as {
+            iter: IterType<unknown>;
+            mapMethod?: MapMethod<unknown, unknown>;
+        };
+
+        if (iter) {
+            if (mapMethod) {
+                return Array.from(iter, mapMethod);
+            }
+            return Array.from(iter);
+        }
+
+        return Array.from(param as IterType<unknown>);
     }
+
+    const [iter, mapMethod = x => x] = args as [IterType, MapMethod];
     return Array.from(iter, mapMethod);
 }
 
