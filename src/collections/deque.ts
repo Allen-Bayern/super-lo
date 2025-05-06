@@ -7,11 +7,11 @@ enum LengthChange {
     /**
      * 添加一个元素
      */
-    ADD_ONE = 'add',
+    ADD_ONE = '+1',
     /**
      * 减少一个元素
      */
-    SUB_ONE = 'sub',
+    SUB_ONE = '-1',
 }
 
 /**
