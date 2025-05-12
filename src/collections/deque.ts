@@ -273,10 +273,31 @@ export class Deque<T> implements Iterable<T> {
         if (index < 0 || index >= this._length) {
             throw new Error('索引越界');
         }
+
+        const fromStart = index;
+        const fromEnd = this._length - index - 1;
+
+        let fromWhere = 'start';
         let currentNode = this._head!;
-        for (let i = 0; i < index; i++) {
-            currentNode = currentNode.next!;
+        if (fromStart > fromEnd) {
+            fromWhere = 'end';
+            currentNode = this._tail!;
         }
+
+        if (fromWhere === 'start') {
+            for (let i = 0; i < fromStart; i++) {
+                currentNode = currentNode.next!;
+            }
+        } else {
+            for (let i = 0; i < fromEnd; i++) {
+                currentNode = currentNode.prev!;
+            }
+        }
+
+        if (!currentNode) {
+            throw new Error('索引越界');
+        }
+
         return currentNode.value;
     }
 
