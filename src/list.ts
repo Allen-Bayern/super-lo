@@ -1,6 +1,8 @@
 type IterType<T = unknown> = Iterable<T> | ArrayLike<T>;
 type MapMethod<T = unknown, U = unknown> = (item: T, index: number) => U;
 
+const defaultMapMethod = <T>(x: T) => x;
+
 /**
  * Type-safe and Pythonic array factory function.
  *
@@ -49,7 +51,7 @@ function list(...args: unknown[]) {
         return Array.from(param as IterType<unknown>);
     }
 
-    const [iter, mapMethod = x => x] = args as [IterType, MapMethod];
+    const [iter, mapMethod = defaultMapMethod] = args as [IterType, MapMethod];
     return Array.from(iter, mapMethod);
 }
 
