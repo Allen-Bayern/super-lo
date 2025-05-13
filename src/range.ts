@@ -4,6 +4,23 @@ interface RangeOptions {
     step?: number;
 }
 
+/**
+ * 生成一个数值范围序列的生成器
+ * @generator
+ * @param param - 支持两种参数形式：
+ *   1. 仅指定结束值（起始值默认为0，步长默认为1）
+ *   2. 完整配置对象（需包含stop，可选start/step）
+ * @yields 序列中的数值
+ * @throws 以下情况会抛出错误：
+ *   - 非整数参数（如stop为浮点数）
+ *   - 步长为0
+ *   - 参数逻辑冲突（如正向步长时start > stop）
+ * @example
+ * // 正向序列
+ * [...range({ start: 2, stop: 5 })] // → [2, 3, 4]
+ * // 反向序列
+ * [...range({ start: 5, stop: 1, step: -1 })] // → [5, 4, 3, 2]
+ */
 function* range(param: number | RangeOptions) {
     let realStart = 0;
     let realStop = 0;
@@ -53,6 +70,15 @@ function* range(param: number | RangeOptions) {
     }
 }
 
+/**
+ * 生成数值范围序列的数组版本
+ * @param param - 参数规则与 `range` 生成器一致
+ * @returns 由序列值组成的数组
+ * @throws 错误类型与 `range` 生成器一致
+ * @example
+ * rangeArray(3) // → [0, 1, 2]
+ * rangeArray({ start: 1, stop: 6, step: 2 }) // → [1, 3, 5]
+ */
 export const rangeArray = (param: number | RangeOptions): number[] => {
     return [...range(param)];
 };
