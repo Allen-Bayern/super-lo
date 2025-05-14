@@ -24,7 +24,7 @@ describe('randint', () => {
 describe('randrange', () => {
     test('从rangeArray结果中选择', () => {
         // 假设rangeArray({start:1, stop:5, step:2})返回[1,3,5]
-        jest.mock('./range', () => ({
+        jest.mock('../range', () => ({
             rangeArray: () => [1, 3, 5],
         }));
 
