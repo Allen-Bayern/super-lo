@@ -6,6 +6,7 @@ export { enumerate, enumerateArray } from './enumerate';
 export { default as getattr } from './getattr';
 export { default as isNumeric } from './is-numeric';
 export { default as list } from './list';
+export { default as pyRandom, randint, randrange, randomChoice } from './random';
 export { default as range, rangeArray } from './range';
 export { default as safeObjectKeys } from './safe-object-keys';
 export { default as setattr } from './setattr';
