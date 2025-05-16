@@ -12,6 +12,7 @@ export { default as safeObjectKeys } from './safe-object-keys';
 export { default as setattr } from './setattr';
 export { default as simpleClassName } from './simple-classname';
 export { default as sum } from './sum';
+export * from './trans-css-unit';
 export { default as zip, looseZip, strictZip } from './zip';
 
 export * from './collections';
