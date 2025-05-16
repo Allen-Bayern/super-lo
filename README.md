@@ -1,6 +1,6 @@
-# Super Lo
+# Super-Lo
 
-A collection of utility functions inspired by Python's built-in functions, designed to make JavaScript/TypeScript development more efficient and Pythonic.
+A collection of Pythonic utility functions inspired by Python's built-in functions, designed to make JavaScript/TypeScript development more efficient.
 
 ## Features
 
