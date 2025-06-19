@@ -18,7 +18,7 @@ interface RandintOpts {
  * @example
  * randint(5)        // Integer between 0~5
  * randint(3, 5)     // Integer between 3~5
- * randint({ min:3, max:5 }) // Same as above
+ * randint({ min:3, max:5 }) // Same as `randint(3, 5)`
  */
 export function randint(max: number): number;
 export function randint(opts: RandintOpts): number;
@@ -50,11 +50,10 @@ export function randint(...args: unknown[]): number {
     const minCeiled = Math.ceil(minVal);
     const maxFloored = Math.floor(maxVal);
     if (minCeiled > maxFloored) {
-        throw new RangeError('min must be less than or equal to max');
+        throw new RangeError('min must be less than or equal to max.');
     }
-    // 可选添加整数校验
     if (!Number.isInteger(minVal) || !Number.isInteger(maxVal)) {
-        console.warn('Non-integer parameters may cause unexpected results');
+        console.warn('Non-integer parameters may cause unexpected results.');
     }
 
     return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
