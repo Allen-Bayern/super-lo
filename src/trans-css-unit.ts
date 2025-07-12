@@ -15,13 +15,115 @@ interface FullParams extends IOptions {
     value: ValueType;
 }
 
-const px2remDefault = (px: number): number => Number((px / 16).toFixed(2));
+// 策略模式：转换策略接口
+interface ConversionStrategy {
+    canHandle(fromUnit: string, toUnit: string): boolean;
+    convert(value: number): number;
+    extractValue(value: string, fromUnit: string): number;
+    verifyUnit(value: string, fromUnit: string): boolean;
+}
 
-const verifyIsSatisfyUnit = (valStr: string, fromUnit: string): boolean => {
-    const escapedUnit = fromUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const unitRegex = new RegExp(`${escapedUnit}$`, 'i');
-    return unitRegex.test(valStr);
-};
+// 默认px到rem转换策略
+class PxToRemStrategy implements ConversionStrategy {
+    private baseSize: number;
+
+    constructor(baseSize: number = 16) {
+        this.baseSize = baseSize;
+    }
+
+    canHandle(fromUnit: string, toUnit: string): boolean {
+        return fromUnit.toLowerCase() === 'px' && toUnit.toLowerCase() === 'rem';
+    }
+
+    convert(value: number): number {
+        return Number((value / this.baseSize).toFixed(2));
+    }
+
+    extractValue(value: string, fromUnit: string): number {
+        const escapedUnit = fromUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const unitRegex = new RegExp(`${escapedUnit}$`, 'i');
+        if (!unitRegex.test(value)) {
+            return 0;
+        }
+        const matched = value.match(NUMBER_REGEX);
+        return matched && matched[0] ? Number(matched[0]) : 0;
+    }
+
+    verifyUnit(value: string, fromUnit: string): boolean {
+        const escapedUnit = fromUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const unitRegex = new RegExp(`${escapedUnit}$`, 'i');
+        return unitRegex.test(value);
+    }
+}
+
+// 通用转换策略（支持自定义算法）
+class CustomConversionStrategy implements ConversionStrategy {
+    private algo: (fromValue: number) => number;
+
+    constructor(algo: (fromValue: number) => number) {
+        this.algo = algo;
+    }
+
+    canHandle(): boolean {
+        return true; // 通用策略可以处理所有转换
+    }
+
+    convert(value: number): number {
+        return this.algo(value);
+    }
+
+    extractValue(value: string, fromUnit: string): number {
+        const escapedUnit = fromUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const unitRegex = new RegExp(`${escapedUnit}$`, 'i');
+        if (!unitRegex.test(value)) {
+            return 0;
+        }
+        const matched = value.match(NUMBER_REGEX);
+        return matched && matched[0] ? Number(matched[0]) : 0;
+    }
+
+    verifyUnit(value: string, fromUnit: string): boolean {
+        const escapedUnit = fromUnit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const unitRegex = new RegExp(`${escapedUnit}$`, 'i');
+        return unitRegex.test(value);
+    }
+}
+
+// 策略管理器
+class ConversionStrategyManager {
+    private strategies: ConversionStrategy[] = [];
+
+    constructor() {
+        // 注册默认策略
+        this.addStrategy(new PxToRemStrategy());
+    }
+
+    addStrategy(strategy: ConversionStrategy): void {
+        this.strategies.push(strategy);
+    }
+
+    getStrategy(fromUnit: string, toUnit: string, algo?: (fromValue: number) => number): ConversionStrategy {
+        // 如果有自定义算法，优先使用自定义策略
+        if (algo) {
+            return new CustomConversionStrategy(algo);
+        }
+
+        // 查找匹配的策略
+        const strategy = this.strategies.find(s => s.canHandle(fromUnit, toUnit));
+        if (strategy) {
+            return strategy;
+        }
+
+        // 如果没有找到匹配的策略，返回默认的px到rem策略
+        return this.strategies[0] || new PxToRemStrategy();
+    }
+}
+
+// 全局策略管理器实例
+const strategyManager = new ConversionStrategyManager();
+
+// 保持原有的默认函数，用于向后兼容
+const px2remDefault = (px: number): number => Number((px / 16).toFixed(2));
 
 /**
  * CSS unit conversion utility with flexible input formats
@@ -74,26 +176,28 @@ export function transCssUnit(...args: unknown[]): string {
 
     const { fromUnit = 'px', toUnit = 'rem', shouldMatchFromUnit = true, algo = px2remDefault } = opts;
 
+    // 使用策略模式处理转换
+    const strategy = strategyManager.getStrategy(fromUnit, toUnit, algo);
+
     let realVal = 0;
     if (typeof val === 'number' || isNumericString(val)) {
         realVal = Number(val);
     } else {
-        if (!verifyIsSatisfyUnit(val, fromUnit)) {
+        if (!strategy.verifyUnit(val, fromUnit)) {
             if (shouldMatchFromUnit) {
                 throw new Error(`Value unit mismatch: Input '${val}' must end with ${fromUnit} (case-insensitive)`);
             } else {
                 return val;
             }
         }
-        const matched = val.match(NUMBER_REGEX);
-        if (!matched || !matched[0]) {
+        realVal = strategy.extractValue(val, fromUnit);
+        // 如果提取不到有效数值，返回'0'
+        if (realVal === 0 && !NUMBER_REGEX.test(val)) {
             return '0';
-        } else {
-            realVal = Number(matched[0]);
         }
     }
 
-    const newValue = algo(realVal);
+    const newValue = strategy.convert(realVal);
     return `${newValue}${toUnit}`;
 }
 
@@ -137,3 +241,7 @@ export const parseCssProperties = <Style extends CssProperties<ValueType>>(
         };
     }, {} as Style);
 };
+
+// 导出策略管理器，供高级用户使用
+export { ConversionStrategyManager };
+export type { ConversionStrategy };
